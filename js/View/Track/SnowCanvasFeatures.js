@@ -350,8 +350,8 @@ define(
 
                     }
 
-                    console.info(alignmentA);
-                    console.info(alignmentB);
+                    // console.info(alignmentA);
+                    // console.info(alignmentB);
 
                     function _generateDiffObjectArray()
                     {
@@ -478,12 +478,12 @@ define(
                             translatedSeq += aminoAcid;
                         }
                         translatedSeq = translatedSeq.split("").reverse().join("");
-                        console.log("frame:",frame,"translatedSeq:",translatedSeq);
+                        // console.log("frame:",frame,"translatedSeq:",translatedSeq);
                         sixTranslatedSeqs[3 + 2 - frame] = translatedSeq;  
                         // sixTranslatedSeqs[3  + frame] = translatedSeq;      // wz add 
 
                     }
-                    console.log("sixTranslatedSeqs:",sixTranslatedSeqs);
+                    // console.log("sixTranslatedSeqs:",sixTranslatedSeqs);
 
                     return sixTranslatedSeqs;
                 },
@@ -1553,8 +1553,8 @@ define(
                             let proteinLeftPosExtended = proteinLeftPos - 2;
                             let proteinRightPosExtended = proteinRightPos + 2;
 
-                            console.log("proteinLeftPos:",proteinLeftPos,"proteinRightPos:",proteinRightPos,
-                            "proteinLeftPosExtended:",proteinLeftPosExtended,"proteinRightPosExtended:",proteinRightPosExtended);
+                            // console.log("proteinLeftPos:",proteinLeftPos,"proteinRightPos:",proteinRightPos,
+                            // "proteinLeftPosExtended:",proteinLeftPosExtended,"proteinRightPosExtended:",proteinRightPosExtended);
 
                             _this.store.getReferenceSequence(
                                 {
@@ -1657,9 +1657,8 @@ define(
                                                 
                                                 let selectLoc = selectLocArr[msScanData[i].selectedRefSeqIndex];
                                                 let _startLoc = _startLocArr[msScanData[i]._start % 3] ;  
-                                                // console.log("_startLoc:",_startLoc,"selectLoc:",selectLoc);
                                                 while (selectLoc !== _startLoc) {
-                                                    msScanData[i]._start++ ; 
+                                                    msScanData[i]._start += 1; 
                                                     _startLoc = _startLocArr[msScanData[i]._start % 3] ; 
                                                     tempS++;
                                                 }
@@ -1724,8 +1723,34 @@ define(
                                         }
 
                                         let thisProteoform = msScanData[thisMsScanTrackId - 1];
-
-                                        // console.log(thisProteoform); 
+                                        let tempS = 0 ; 
+                                        if (thisProteoform.strand === '-') {
+                                            let _startLocArr = [3,1,2] ;
+                                            let selectLocArr = [3,2,1] ; 
+                                            
+                                            let selectLoc = selectLocArr[thisProteoform.selectedRefSeqIndex];
+                                            let _startLoc = _startLocArr[thisProteoform._start % 3] ;  
+                                            while (selectLoc !== _startLoc) {
+                                                thisProteoform._start += 1; 
+                                                _startLoc = _startLocArr[thisProteoform._start % 3] ; 
+                                                tempS++;
+                                            }
+                                        } else if(thisProteoform.strand === '+') {
+                                            let locArr = [0,2,1] ; 
+                                            let curLoc = thisProteoform._start % 3 ;
+                                            let temp = locArr[curLoc] ;    //当前选择的序列 0 - 0 ， 1 - 2 ， 2 - 1  
+                                            let selectIndex = thisProteoform.selectedRefSeqIndex ;
+                                            // console.log("selectIndex:",selectIndex,"temp:",temp);
+                                            if (selectIndex !== temp ) {     // 说明选取的参考序列有偏移
+                                                let curStart =thisProteoform._start ; 
+                                                while (locArr[curStart % 3] !== selectIndex) {
+                                                    curStart++;
+                                                    tempS++;
+                                                }
+                                                // console.log("curStart:",curStart);
+                                                thisProteoform = curStart ; 
+                                            } 
+                                        }
                 
                                         if(_this.config.DEBUG_SCANID && !isNaN(_this.config.DEBUG_SCANID))
                                         {
