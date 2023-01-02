@@ -1723,7 +1723,6 @@ define(
                                         }
 
                                         let thisProteoform = msScanData[thisMsScanTrackId - 1];
-                                        let tempS = 0 ; 
                                         if (thisProteoform.strand === '-') {
                                             let _startLocArr = [3,1,2] ;
                                             let selectLocArr = [3,2,1] ; 
@@ -1733,22 +1732,17 @@ define(
                                             while (selectLoc !== _startLoc) {
                                                 thisProteoform._start += 1; 
                                                 _startLoc = _startLocArr[thisProteoform._start % 3] ; 
-                                                tempS++;
                                             }
-                                        } else if(thisProteoform.strand === '+') {
+                                        } 
+                                        else if(thisProteoform.strand === '+') {
                                             let locArr = [0,2,1] ; 
                                             let curLoc = thisProteoform._start % 3 ;
                                             let temp = locArr[curLoc] ;    //当前选择的序列 0 - 0 ， 1 - 2 ， 2 - 1  
                                             let selectIndex = thisProteoform.selectedRefSeqIndex ;
-                                            // console.log("selectIndex:",selectIndex,"temp:",temp);
                                             if (selectIndex !== temp ) {     // 说明选取的参考序列有偏移
-                                                let curStart =thisProteoform._start ; 
-                                                while (locArr[curStart % 3] !== selectIndex) {
-                                                    curStart++;
-                                                    tempS++;
+                                                while (locArr[thisProteoform._start % 3] !== selectIndex) {
+                                                    thisProteoform._start += 1;
                                                 }
-                                                // console.log("curStart:",curStart);
-                                                thisProteoform = curStart ; 
                                             } 
                                         }
                 
